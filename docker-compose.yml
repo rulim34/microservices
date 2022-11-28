@@ -1,0 +1,36 @@
+# Use docker compose v3
+version: '3'
+
+# Define volume with name 'app-db'
+volumes:
+  app-db:
+    driver: local
+
+# Define services
+services:
+  # Define service 'item-db'
+  item-db:
+    # Set container name
+    container_name: item-db
+    # Use image 'mongo:3'
+    image: mongo:3
+    # Use volume 'app-db'
+    volumes:
+      - app-db:/data/db
+    # Set restart policy
+    restart: unless-stopped
+
+  # Define service 'item-api'
+  item-app:
+    # Set container name
+    container_name: item-app
+    # Use image 'item-app:v1'
+    image: ghcr.io/rulim34/item-app:v1
+    # Set dependencies
+    depends_on:
+      - item-db
+    # Set ports
+    ports:
+      - 80:8080
+    # Set restart policy
+    restart: unless-stopped
